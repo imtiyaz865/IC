@@ -173,29 +173,39 @@ gsap.to(".box", {
 });
 
 document.querySelectorAll(".project-box").forEach((box) => {
-    let prevX = 0;
+    const isMobile = window.innerWidth <= 768; // mobile check
+
     const img = box.querySelector("img");
     const h1 = box.querySelector("h1");
     const h6 = box.querySelector("h6");
-    box.addEventListener("mousemove", (e) => {
-        const rect = box.getBoundingClientRect();
-        const relX = e.clientX - rect.left;
-        const relY = e.clientY - rect.top;
-        const diff = e.clientX - prevX;
-        prevX = e.clientX;
-        gsap.to(img, {
-            opacity: 1,
-            ease: "power3.out",
-            top: relY - img.offsetHeight / 2,
-            left: relX - img.offsetWidth / 2,
-            rotate: gsap.utils.clamp(-20, 20, diff * 0.5)
+
+    if (!isMobile) {
+        // ✅ Mousemove effect only for desktop
+        let prevX = 0;
+        box.addEventListener("mousemove", (e) => {
+            const rect = box.getBoundingClientRect();
+            const relX = e.clientX - rect.left;
+            const relY = e.clientY - rect.top;
+            const diff = e.clientX - prevX;
+            prevX = e.clientX;
+            gsap.to(img, {
+                opacity: 1,
+                ease: "power3.out",
+                top: relY - img.offsetHeight / 2,
+                left: relX - img.offsetWidth / 2,
+                rotate: gsap.utils.clamp(-20, 20, diff * 0.5)
+            });
+            if (h1) h1.style.opacity = 0.2;
+            if (h6) h6.style.opacity = 0.2;
         });
-        if (h1) h1.style.opacity = 0.2;
-        if (h6) h6.style.opacity = 0.2;
-    });
-    box.addEventListener("mouseleave", () => {
-        gsap.to(img, { opacity: 0, ease: "power3.out" });
-        if (h1) h1.style.opacity = 1;
-        if (h6) h6.style.opacity = 1;
-    });
+
+        box.addEventListener("mouseleave", () => {
+            gsap.to(img, { opacity: 0, ease: "power3.out" });
+            if (h1) h1.style.opacity = 1;
+            if (h6) h6.style.opacity = 1;
+        });
+    } else {
+        // ✅ Mobile me image always visible
+        img.style.opacity = 1;
+    }
 });
